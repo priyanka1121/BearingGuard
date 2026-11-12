@@ -1,47 +1,45 @@
-<div align="center">
+<p align="center">
+  <img src="assets/banner.svg" alt="BearingGuard: a spinning bearing and a vibration waveform that changes when a fault appears" width="100%">
+</p>
 
-# ⚙️ BearingGuard
+<p align="center">
+  <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3.x-3776AB?logo=python&logoColor=white" alt="Python"></a>
+  <a href="https://fastapi.tiangolo.com/"><img src="https://img.shields.io/badge/FastAPI-Backend-009688?logo=fastapi&logoColor=white" alt="FastAPI"></a>
+  <a href="https://react.dev/"><img src="https://img.shields.io/badge/React-Frontend-61DAFB?logo=react&logoColor=black" alt="React"></a>
+  <a href="https://scikit-learn.org/"><img src="https://img.shields.io/badge/scikit--learn-RandomForest-F7931E?logo=scikitlearn&logoColor=white" alt="scikit-learn"></a>
+</p>
 
-### AI-powered bearing fault detection from vibration signals
-
-[![Python](https://img.shields.io/badge/Python-3.x-3776AB?logo=python&logoColor=white)](https://www.python.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-Backend-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
-[![React](https://img.shields.io/badge/React-Frontend-61DAFB?logo=react&logoColor=black)](https://react.dev/)
-[![scikit-learn](https://img.shields.io/badge/scikit--learn-RandomForest-F7931E?logo=scikitlearn&logoColor=white)](https://scikit-learn.org/)
-
-*Turning raw industrial vibration data into real-time fault predictions — end to end.*
-
-</div>
+<p align="center"><em>Turning raw industrial vibration data into fault predictions, end to end.</em></p>
 
 ---
 
-## 🧭 Overview
+## Overview
 
-**BearingGuard** is a full-stack machine learning application that detects bearing conditions from vibration signals, combining **signal processing, domain-informed feature engineering, Random Forest classification, FastAPI, and React**.
+**BearingGuard** is a full-stack machine learning application that detects the condition of a bearing from its vibration signal. It combines **signal processing, domain-informed feature engineering, Random Forest classification, FastAPI and React**.
 
-It takes:
+You give it two things:
 
-- 📄 A MATLAB `.mat` vibration recording
-- ⚙️ Motor RPM
+- A MATLAB `.mat` vibration recording
+- The motor RPM
 
-...and returns a fault prediction with confidence scores and a plain-language recommendation.
+and it returns a fault prediction, confidence scores and a plain-language recommendation.
 
-The project demonstrates the complete journey from raw industrial vibration data to a working ML-powered web application — not just a notebook, but a deployable, testable system.
+I wanted to show the whole journey from raw industrial vibration data to a working ML-powered web application. It is not only a notebook, it is a system you can run, test and deploy.
 
-### 🩺 Supported Conditions
+### Supported conditions
 
 | Condition | Status |
 |---|---|
-| `normal` | 🟢 No detected bearing fault |
+| `normal` | 🟢 No bearing fault detected |
 | `inner_race` | 🔴 Inner-race fault |
 | `outer_race` | 🔴 Outer-race fault |
 | `ball` | 🔴 Ball-element fault |
 
 ---
 
-## ✨ Why I Built This
+## Why I built this
 
-The goal wasn't just to produce a machine-learning notebook — it was to understand how a trained model becomes a *usable application*.
+I did not want to stop at a machine learning notebook. I wanted to understand how a trained model becomes something people can actually use.
 
 ```
 Raw Industrial Data
@@ -61,19 +59,19 @@ React Frontend
 End-to-End Testing
 ```
 
-This project gave me hands-on experience with both the ML side (signal processing, feature engineering, classification) and the software engineering required to serve a model as a real application (APIs, validation, integration testing).
+The project taught me the ML side (signal processing, feature engineering, classification) and the software engineering needed to serve a model as a real application (APIs, validation, integration testing).
 
 ---
 
-## 🧠 How It Works
+## How it works
 
 ### 1. Input
 
-The React frontend sends a `.mat` vibration file and motor RPM to the FastAPI backend via a multipart HTTP request.
+The React frontend sends a `.mat` vibration file and the motor RPM to the FastAPI backend as a multipart HTTP request.
 
-### 2. Vibration Signal Extraction
+### 2. Vibration signal extraction
 
-The backend reads the `.mat` file with **SciPy**, locates the drive-end vibration signal (following the `_DE_time` naming convention), and flattens it into a 1D sequence.
+The backend reads the `.mat` file with **SciPy**, finds the drive-end vibration signal (following the `_DE_time` naming convention) and flattens it into a 1D sequence.
 
 ### 3. Windowing
 
@@ -86,27 +84,29 @@ The first 2,048 samples are used to build the model input.
 
 ---
 
-## 📊 Feature Engineering
+## Feature engineering
 
 BearingGuard combines several families of signal features.
 
-### ⏱️ Time-Domain Features
+### Time-domain features
+
 RMS · Standard deviation · Kurtosis · Skewness · Peak · Peak-to-peak · Crest factor
 
-### 📡 Frequency-Domain Features (FFT)
+### Frequency-domain features (FFT)
+
 Dominant frequency · Spectral energy · **BPFI**, **BPFO**, **BSF**, **FTF** energy
 
-Shaft frequency is derived as:
+The shaft frequency comes from the RPM:
 
 ```
 shaft frequency = RPM / 60
 ```
 
-Bearing characteristic frequencies (BPFI, BPFO, BSF, FTF) are then estimated using the configured bearing factors, since these frequency regions carry information associated with different fault types.
+The bearing characteristic frequencies (BPFI, BPFO, BSF, FTF) are then estimated with the configured bearing factors, because each frequency region carries information about a different fault type.
 
-### 🌊 Envelope Spectrum
+### Envelope spectrum
 
-Bearing faults often produce repetitive impact patterns that are hard to spot in the raw signal. BearingGuard applies the **Hilbert transform** to obtain the analytic signal and compute the vibration envelope, extracting:
+Bearing faults often produce repeating impact patterns that are hard to see in the raw signal. BearingGuard applies the **Hilbert transform** to get the analytic signal and compute the vibration envelope, then extracts:
 
 - Envelope BPFI
 - Envelope BPFO
@@ -115,20 +115,20 @@ Bearing faults often produce repetitive impact patterns that are hard to spot in
 
 ---
 
-## 🤖 Machine Learning
+## Machine learning
 
-The classifier is a **Random Forest**, persisted with **Joblib**:
+The classifier is a **Random Forest**, saved with **Joblib**:
 
 ```
 backend/models/bearing_fault_model.pkl
 backend/models/feature_columns.pkl
 ```
 
-Feature ordering is stored separately so the API always sends features to the model in the exact order used during training.
+The feature order is stored separately, so the API always sends features to the model in exactly the order used during training.
 
 ---
 
-## 🏗️ System Architecture
+## System architecture
 
 ```
                     USER
@@ -178,10 +178,14 @@ Feature ordering is stored separately so the API always sends features to the mo
 
 ---
 
-## 📁 Project Structure
+## Project structure
 
 ```
 BearingGuard/
+│
+├── assets/
+│   ├── banner.svg
+│   └── footer.svg
 │
 ├── backend/
 │   ├── api/
@@ -197,6 +201,7 @@ BearingGuard/
 ├── frontend/
 │   ├── public/
 │   ├── src/
+│   │   ├── api.js
 │   │   ├── App.jsx
 │   │   ├── App.css
 │   │   ├── index.css
@@ -211,9 +216,10 @@ BearingGuard/
 
 ---
 
-## 🔌 API Reference
+## API reference
 
 ### `GET /`
+
 Basic API status check.
 
 ```json
@@ -221,16 +227,18 @@ Basic API status check.
 ```
 
 ### `GET /health`
-Checks whether the API and model are available.
+
+Checks that the API and the model are available.
 
 ```json
 { "status": "healthy", "model_loaded": true }
 ```
 
 ### `POST /predict-file`
+
 The main inference endpoint.
 
-**Request** — multipart form data:
+**Request** (multipart form data):
 
 | Parameter | Type | Description |
 |---|---|---|
@@ -256,15 +264,15 @@ The main inference endpoint.
 
 ---
 
-## 🖥️ Running the Project Locally
+## Running the project locally
 
 ### Prerequisites
 
 - Python 3.x
-- Node.js & npm
+- Node.js and npm
 - Git
 
-### 1️⃣ Start the Backend
+### 1. Start the backend
 
 ```bash
 # From the project root
@@ -286,7 +294,7 @@ python -m uvicorn backend.api.main:app --reload
 | Swagger Docs | http://127.0.0.1:8000/docs |
 | Health Check | http://127.0.0.1:8000/health |
 
-### 2️⃣ Start the Frontend
+### 2. Start the frontend
 
 ```bash
 cd frontend
@@ -294,21 +302,21 @@ npm install
 npm run dev
 ```
 
-Open the URL Vite prints — usually **http://localhost:5173**
+Open the URL Vite prints, usually **http://localhost:5173**
 
-### 🔗 Frontend ↔ Backend
+### Frontend and backend together
 
 ```
 React (localhost:5173)  ──HTTP POST──▶  FastAPI (127.0.0.1:8000)  ──▶  ML Model
 ```
 
-The frontend sends the uploaded file and RPM to `POST /predict-file`; FastAPI runs inference and returns JSON, which React renders as the result.
+The frontend sends the uploaded file and RPM to `POST /predict-file`. FastAPI runs inference and returns JSON, and React shows it as the result.
 
 ---
 
-## 🧪 Testing
+## Testing
 
-Tested through the complete integration flow:
+I tested the complete integration flow:
 
 ```
 React UI → Input Validation → File Upload → FastAPI → MAT Parsing
@@ -316,7 +324,7 @@ React UI → Input Validation → File Upload → FastAPI → MAT Parsing
 → Prediction → API Response → React Result UI
 ```
 
-| Test Case | Scenario |
+| Test case | Scenario |
 |---|---|
 | TC-01 | Normal bearing |
 | TC-02 | Inner-race fault |
@@ -325,39 +333,37 @@ React UI → Input Validation → File Upload → FastAPI → MAT Parsing
 | TC-05 | Missing RPM |
 | TC-06 | Invalid RPM |
 | TC-07 | Invalid MAT file |
-| TC-08 | Frontend ↔ Backend integration |
+| TC-08 | Frontend and backend integration |
 
 ---
 
-## 🛠️ Engineering Challenges
+## Engineering challenges
 
-**Python Environment** — Resolved issues with virtual environments, Uvicorn launcher paths, and dependency versions.
+**Python environment.** I fixed problems with virtual environments, Uvicorn launcher paths and dependency versions.
 
-**FastAPI** — Implemented REST endpoints, file uploads, form data, Pydantic validation, CORS, and error handling.
+**FastAPI.** I built REST endpoints, file uploads, form data, Pydantic validation, CORS and error handling.
 
-**MATLAB Data** — Built extraction of vibration signals from `.mat` files using SciPy.
+**MATLAB data.** I wrote the extraction of vibration signals from `.mat` files using SciPy.
 
-**ML Model Compatibility** — Investigated and resolved scikit-learn version-compatibility warnings when loading the persisted Random Forest model.
+**ML model compatibility.** I investigated and resolved scikit-learn version warnings when loading the saved Random Forest model.
 
-**Frontend Integration** — Connected React to the FastAPI inference endpoint and handled returned prediction data.
+**Frontend integration.** I connected React to the FastAPI inference endpoint and handled the returned prediction data.
 
-**Input Validation** — Handled invalid/missing RPM input and backend validation failures gracefully.
-
----
-
-## 📓 Notebooks
-
-Located in `backend/notebooks/`:
-
-- **`01_explore_data.ipynb`** — exploring and understanding the vibration dataset
-- **`model.ipynb`** — feature engineering and model-development workflow
-
-The notebooks represent the experimentation phase, while `backend/api/main.py` is the deployed inference logic.
+**Input validation.** I handled invalid and missing RPM input, and backend validation failures, gracefully.
 
 ---
 
-<div align="center">
+## Notebooks
 
-Built with 🔧 signal processing, 🌲 Random Forests, and a lot of debugging.
+Found in `backend/notebooks/`:
 
-</div>
+- **`01_explore_data.ipynb`**: exploring and understanding the vibration dataset
+- **`model.ipynb`**: the feature engineering and model development workflow
+
+The notebooks are the experimentation phase. `backend/api/main.py` holds the inference logic that actually runs in the app.
+
+---
+
+<p align="center">
+  <img src="assets/footer.svg" alt="Built with signal processing, Random Forests, and a lot of debugging. Priyanka Gupta" width="100%">
+</p>
