@@ -10,7 +10,7 @@ const RPM_FIELD = "rpm"; //        CONFIG 3: form field name for the motor speed
 
 export async function checkServer() {
   try {
-    const res = await fetch(`${BASE}/`, { signal: AbortSignal.timeout(5000) });
+    const res = await fetch(`${BASE}/`, { signal: AbortSignal.timeout(8000) });
     return res.status < 500;
   } catch {
     return false;

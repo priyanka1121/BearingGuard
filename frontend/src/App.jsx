@@ -47,7 +47,21 @@ export default function App() {
   const input = useRef(null)
 
   useEffect(() => {
-    checkServer().then(setOnline)
+    let stop = false
+    ;(async () => {
+      for (let i = 0; i < 14 && !stop; i++) {
+        if (await checkServer()) {
+          if (!stop) setOnline(true)
+          return
+        }
+        if (i === 0 && !stop) setOnline('waking')
+        await new Promise((r) => setTimeout(r, 4000))
+      }
+      if (!stop) setOnline(false)
+    })()
+    return () => {
+      stop = true
+    }
   }, [])
 
   const pick = (f) => {
@@ -91,8 +105,8 @@ export default function App() {
           </svg>
           BearingGuard
         </div>
-        <span className={`pill ${online === false ? 'off' : online ? 'on' : ''}`}>
-          <i /> {online === null ? 'Checking server' : online ? 'Server ready' : 'Server offline'}
+        <span className={`pill ${online === false ? 'off' : online === true ? 'on' : ''}`}>
+          <i /> {online === null ? 'Checking server' : online === 'waking' ? 'Waking the server, about a minute' : online ? 'Server ready' : 'Server offline'}
         </span>
       </header>
 

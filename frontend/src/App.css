@@ -547,3 +547,33 @@ input:focus-visible {
     transition: none;
   }
 }
+
+/* light behind the glass so the blur has something to bend */
+.tool {
+  position: relative;
+}
+
+.tool::before,
+.tool::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.tool::before {
+  width: 280px;
+  height: 280px;
+  left: -70px;
+  top: 60px;
+  background: radial-gradient(circle, rgba(79, 209, 181, 0.6), transparent 70%);
+}
+
+.tool::after {
+  width: 320px;
+  height: 320px;
+  right: -80px;
+  bottom: -10px;
+  background: radial-gradient(circle, rgba(124, 108, 255, 0.55), transparent 70%);
+}
