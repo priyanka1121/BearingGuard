@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/banner.svg" alt="BearingGuard: a spinning bearing and a vibration waveform that changes when a fault appears" width="100%">
+  <img src="frontend/src/assets/banner.svg" alt="BearingGuard: a spinning bearing and a vibration waveform that changes when a fault appears" width="100%">
 </p>
 
 <p align="center">
@@ -365,5 +365,5 @@ The notebooks are the experimentation phase. `backend/api/main.py` holds the inf
 ---
 
 <p align="center">
-  <img src="assets/footer.svg" alt="Built with signal processing, Random Forests, and a lot of debugging. Priyanka Gupta" width="100%">
+  <img src="frontend/src/assets/footer.svg" alt="Built with signal processing, Random Forests, and a lot of debugging. Priyanka Gupta" width="100%">
 </p>
